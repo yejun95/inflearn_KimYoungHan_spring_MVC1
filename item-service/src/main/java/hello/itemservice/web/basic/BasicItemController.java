@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -36,17 +37,31 @@ public class BasicItemController {
         return "basic/addForm";
     }
 
+//    @PostMapping("add")
+//    public String saveV1(@RequestParam String itemName,
+//                       @RequestParam Integer price,
+//                       @RequestParam Integer quantity,
+//                       Model model) {
+//
+//        Item item = new Item(itemName, price, quantity);
+//        itemRepository.save(item);
+//
+//        model.addAttribute("item", item);
+//        return "basic/item";
+//    }
+
     @PostMapping("add")
-    public String save(@RequestParam String itemName,
+    public String saveV2(@RequestParam String itemName,
                        @RequestParam Integer price,
                        @RequestParam Integer quantity,
+                       RedirectAttributes redirectAttributes,
                        Model model) {
 
         Item item = new Item(itemName, price, quantity);
-        itemRepository.save(item);
-
-        model.addAttribute("item", item);
-        return "basic/item";
+        Item saveItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", saveItem.getId()); // redirect 하면서 pathvariable 넘기기
+        redirectAttributes.addAttribute("status", true); // url 뒤에 쿼리파라미터로 붙음, ex) ?status=true
+        return "redirect:/basic/items/{itemId}";
     }
 
     @GetMapping("/{itemId}/edit")
@@ -60,7 +75,7 @@ public class BasicItemController {
     @PostMapping("/{itemId}/edit")
     public String update(@PathVariable Long itemId, @ModelAttribute Item item) {
         itemRepository.update(itemId, item);
-        return "redirect:/basic/items/{itemId}"; // url 초기화를 위해 리다이렉트로 진행
+        return "redirect:/basic/items/{itemId}"; // PRG 패턴 Post-Redirect-Get
     }
 
     /**

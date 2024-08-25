@@ -16,6 +16,10 @@
   <div class="py-5 text-center">
     <h2>상품 상세</h2>
   </div>
+
+  <!-- controller에서 redirectAttribute로 파라미터를 붙였으며, 그거를 이용해서 저장완료 됐는지 띄워줌 -->
+  <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>
+
   <div>
     <label for="itemId">상품 ID</label>
     <input type="text" id="itemId" name="itemId" class="form-control"
